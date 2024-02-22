@@ -1,0 +1,93 @@
+#pragma kernel GaussianBlurHorizontal
+#pragma kernel GaussianBlurVertical
+
+Texture2D<float4> Source;
+RWTexture2D<float4> Result;
+
+
+static float gaussian17[] =
+{
+    0.00002611081194810,
+    0.00021522769030413,
+    0.00133919168719865,
+    0.00628987509902766,
+    0.02229954363469697,
+    0.05967667338326389,
+    0.12055019394312867,
+    0.18381709484250766,
+    0.21157217927735517,
+    0.18381709484250766,
+    0.12055019394312867,
+    0.05967667338326389,
+    0.02229954363469697,
+    0.00628987509902766,
+    0.00133919168719865,
+    0.00021522769030413,
+    0.00002611081194810,
+};
+
+float blurRadius;
+float4 textureSize;
+//采样最大半径，模糊半径与采用的高斯核和该半径相关，本CS采用的核为17*17则模糊半径最大为 32 /（（17 - 1）/ 2 ） = 4
+#define MAX_RADIUS 32
+//需要在左右（上下）多采样32个像素
+// [32个向前多采样的像素][每个线程对应的像素][向后多采样的32个像素值]
+groupshared float3 colors[64 + MAX_RADIUS * 2];
+
+float3 SampleGaussian(uint index){
+	 float3 mixColor = 0;
+	 for(uint i = 0; i < 17; ++i){//高斯核采样
+		float weight = gaussian17[i];
+        float sampleOffset = clamp(((float)i - 8) * blurRadius, 0, 31);
+        int floorInt = clamp(floor(sampleOffset), 0, 30);
+        float t = sampleOffset - floorInt;
+        float3 color1 = colors[index + MAX_RADIUS + floorInt];
+        float3 color2 = colors[index + MAX_RADIUS + floorInt + 1];
+        mixColor = mixColor + lerp(color1, color2, t) * weight;
+	 }
+     return mixColor;
+}
+
+
+//可以将每个线程组看成对应于texture的一行像素中的64个
+//SV_DispatchThreadID对应于这个像素在texture中的位置
+//SV_GroupIndex对应于该像素在此线程组中的位置
+[numthreads(64,1,1)]
+void GaussianBlurHorizontal (uint3 id : SV_DispatchThreadID, uint groupIndex : SV_GroupIndex)
+{
+	int2 pos = clamp(id.xy, 0, textureSize.xy - 1);//clamp防止采样位置非法
+	uint index = groupIndex;
+	colors[index + MAX_RADIUS] = Source.Load(uint3(pos, 0)).rgb;
+	if(index < 32){
+		int2 prePos = clamp(id.xy - int2(MAX_RADIUS, 0), 0, textureSize.xy - 1);
+		colors[index] = Source.Load(uint3(prePos, 0)).rgb;
+	}
+	if(index >= 32){//index + MAX_RADIUS >= 32 + MAX_RADIUS
+		int2 afterPos = clamp(id.xy + int2(MAX_RADIUS, 0), 0, textureSize.xy - 1);
+		colors[index + 2 * MAX_RADIUS] = Source.Load(uint3(afterPos, 0)).rgb;
+	}
+	 GroupMemoryBarrierWithGroupSync();//等待所有线程执行到这一步，此时colors均有数据
+
+	 float3 mixColor = SampleGaussian(index);
+     Result[pos] = float4(mixColor, 1);
+}
+
+[numthreads(1,64,1)]
+void GaussianBlurVertical (uint3 id : SV_DispatchThreadID, uint groupIndex : SV_GroupIndex)
+{
+	int2 pos = clamp(id.xy, 0, textureSize.xy - 1);//clamp防止采样位置非法
+	uint index = groupIndex;
+	colors[index + MAX_RADIUS] = Source.Load(uint3(pos, 0)).rgb;
+	if(index < 32){
+		int2 prePos = clamp(id.xy - int2(0, MAX_RADIUS), 0, textureSize.xy - 1);
+		colors[index] = Source.Load(uint3(prePos, 0)).rgb;
+	}
+	if(index >= 32){//index + MAX_RADIUS >= 32 + MAX_RADIUS
+		int2 afterPos = clamp(id.xy + int2(0, MAX_RADIUS), 0, textureSize.xy - 1);
+		colors[index + 2 * MAX_RADIUS] = Source.Load(uint3(afterPos, 0)).rgb;
+	}
+	 GroupMemoryBarrierWithGroupSync();//等待所有线程执行到这一步，此时colors均有数据
+
+	 float3 mixColor = SampleGaussian(index);
+     Result[pos] = float4(mixColor, 1);
+}

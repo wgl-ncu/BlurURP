@@ -1,0 +1,125 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-1471964948629314819
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b8aacc7a8831124ba828edf3bb6a24b, type: 3}
+  m_Name: NewTiltShiftBlurFeature
+  m_EditorClassIdentifier: 
+  m_Active: 0
+  _settings:
+    blurRaius: 2.52
+    iteration: 86
+    centerOffset: -0.169
+    areaSize: 2.05
+    areaSmooth: 6.64
+    showPriview: 0
+  _shader: {fileID: 4800000, guid: 91b3c793737844546a84e85d8fe9de0f, type: 3}
+--- !u!114 &-1203143955853407442
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fef1f7127ea9a694f854a8df52143674, type: 3}
+  m_Name: NewRadialBlurRenderFeature
+  m_EditorClassIdentifier: 
+  m_Active: 0
+  quality: 30
+  centerX: 0.751
+  centerY: 0.725
+  blurRadius: -0.218
+  shader: {fileID: 4800000, guid: 8fbadd8bb90cab149a519414eba188f1, type: 3}
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de640fe3d0db1804a85f9fc8f5cadab6, type: 3}
+  m_Name: ForwardRenderer
+  m_EditorClassIdentifier: 
+  m_RendererFeatures:
+  - {fileID: -1203143955853407442}
+  - {fileID: 7605850510535040078}
+  - {fileID: 4784589082784552086}
+  - {fileID: -1471964948629314819}
+  m_RendererFeatureMap: 2e0bb359f2924def4e1c2ae7bd688d6996d495c36b466642fda21f93ad8792eb
+  postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
+  xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
+  shaders:
+    blitPS: {fileID: 4800000, guid: c17132b1f77d20942aa75f8429c0f8bc, type: 3}
+    copyDepthPS: {fileID: 4800000, guid: d6dae50ee9e1bfa4db75f19f99355220, type: 3}
+    screenSpaceShadowPS: {fileID: 4800000, guid: 0f854b35a0cf61a429bd5dcfea30eddd, type: 3}
+    samplingPS: {fileID: 4800000, guid: 04c410c9937594faa893a11dceb85f7e, type: 3}
+    tileDepthInfoPS: {fileID: 0}
+    tileDeferredPS: {fileID: 0}
+    stencilDeferredPS: {fileID: 4800000, guid: e9155b26e1bc55942a41e518703fe304, type: 3}
+    fallbackErrorPS: {fileID: 4800000, guid: e6e9a19c3678ded42a3bc431ebef7dbd, type: 3}
+    materialErrorPS: {fileID: 4800000, guid: 5fd9a8feb75a4b5894c241777f519d4e, type: 3}
+  m_OpaqueLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_TransparentLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_DefaultStencilState:
+    overrideStencilState: 0
+    stencilReference: 0
+    stencilCompareFunction: 8
+    passOperation: 0
+    failOperation: 0
+    zFailOperation: 0
+  m_ShadowTransparentReceive: 1
+  m_RenderingMode: 0
+  m_AccurateGbufferNormals: 0
+--- !u!114 &4784589082784552086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e79292aefef1d494bac451f756222349, type: 3}
+  m_Name: NewDualKawaseBlurRenderFeature
+  m_EditorClassIdentifier: 
+  m_Active: 0
+  _setting:
+    blurRadius: 2.8
+    iteration: 3
+    rtDowmScaling: 1.8
+  _shader: {fileID: 4800000, guid: 138abf7e38fc73c41b0d5f7bbd387b69, type: 3}
+--- !u!114 &7605850510535040078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 429b37f9aa464cf479795f25577ecc75, type: 3}
+  m_Name: NewDualGaussianRenderFeature
+  m_EditorClassIdentifier: 
+  m_Active: 0
+  _settings:
+    blurRadius: 4.47
+    iteration: 4
+    rtDownScaling: 1
+    shader: {fileID: 4800000, guid: 1a466d89abfe06245a220a47e1b9d33c, type: 3}
+    compute: {fileID: 7200000, guid: 77429d5e1a61f1442b78b0f56d5f5dc5, type: 3}
+    useCS: 1
